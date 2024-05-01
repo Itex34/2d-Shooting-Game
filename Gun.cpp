@@ -24,17 +24,14 @@ void Gun::update(int windowWidth, int windowHeight) {
     rotationAngle = atan2(dy, dx) * 180 / M_PI;
     rotationAngle += angleOffsetCorrection;
 
-
-
 } 
 
 void Gun::render(SDL_Renderer* renderer, int windowWidth, int windowHeight) {
-    float pelletSpeed = 3.0f;
+    float pelletSpeed = 20.0f;
     float pelletVelX = pelletSpeed * cos((rotationAngle - 40.1) * M_PI / 180);
     float pelletVelY = pelletSpeed * sin((rotationAngle - 40.1) * M_PI / 180);
-    //pelletX = 50;
-    //pelletY = 50;
     Uint32 mouseState = SDL_GetMouseState(&mouseX, &mouseY);
+
     if (mouseState & SDL_BUTTON(SDL_BUTTON_LEFT)){
         pelletX += pelletVelX;
         pelletY += pelletVelY;
@@ -59,32 +56,34 @@ void Gun::render(SDL_Renderer* renderer, int windowWidth, int windowHeight) {
         SDL_FreeSurface(imageSurface);
     }
 
-    // calculate rendering position
     int renderX = gunX - width / 2;
     int renderY = gunY - height / 2;
 
-
-    pellet->render(game->getRenderer(), pelletX, pelletY);//here i access the game that is defined in the main.cpp file 
-    pellet->update(pelletX, pelletY);
-
+    if(pellet->isOutOfBoundaries == false){
+        shoot(windowWidth, windowHeight);
+    }
+    else if(pellet != nullptr && pellet->isOutOfBoundaries) {
+        pellet->deleteTexure(pellet->getTexture());
+        delete pellet;
+        pellet = nullptr;
+    }
     SDL_Rect rect{ renderX, renderY, width, height };
 
     // render the rotated texture
     SDL_RenderCopyEx(renderer, texture, NULL, &rect, rotationAngle, nullptr, SDL_FLIP_NONE);
 
+
 }
 void Gun::shoot(int windowWidth, int windowHeight) {
-        pellet->render(game->getRenderer(), pelletX, pelletY);//here i access the game that is defined in the main.cpp file 
-        pellet->update(pelletX, pelletY);
+    if (pellet != nullptr) {
+        pellet->render(game->getRenderer(), pelletX, pelletY);
+        pellet->update(pelletX, pelletY, windowWidth, windowHeight);
+    }
 }
 
 void Gun::cleanup() {
     if (pellet != nullptr) {
         delete pellet;
         pellet = nullptr;
-    }
-    if (game != nullptr) {
-        delete game;
-        game = nullptr;
     }
 }
