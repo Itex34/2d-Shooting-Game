@@ -6,10 +6,11 @@
 
 class Pellet {
 public:
-    Pellet(int x, int y, float velX, float velY);
-    void update(int x, int y, int windowWidth, int windowHieght);
-    void render(SDL_Renderer* renderer, int x, int y);
-    void deleteTexure(SDL_Texture* texture);
+    ~Pellet();
+    Pellet(float x, float y, float velX, float velY);
+    void update(float x, float y, int windowWidth, int windowHieght);
+    void render(SDL_Renderer* renderer, float x, float y, SDL_Texture* texture);
+    void deleteTexture(SDL_Texture* texture);
     SDL_Texture* getTexture() const;
     bool isOutOfBoundaries = false;
 
@@ -24,4 +25,3 @@ private:
 };
 
 #endif // PELLET_HPP
-
