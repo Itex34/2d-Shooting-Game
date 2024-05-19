@@ -2,8 +2,8 @@
 #ifndef Game_hpp
 #define Game_hpp
 #define SDL_MAIN_HANDLED
-#include "SDL.h"
-#include "SDL_image.h"
+#include "SDL2/SDL.h"
+#include "SDL2/SDL_image.h"
 #include <iostream>
 
 
@@ -18,7 +18,7 @@ public:
 	void update();
 	void render();
 	void clean();
-	bool running() {return isRunning;}
+	bool running() { return isRunning; }
 	SDL_Renderer* getRenderer() const;
 
 private:
@@ -26,8 +26,8 @@ private:
 	int height = 100;
 	int cnt = 0;
 	bool isRunning;
-	SDL_Window *window;
-	SDL_Renderer  *renderer;
+	SDL_Window* window;
+	SDL_Renderer* renderer;
 };
 
 
