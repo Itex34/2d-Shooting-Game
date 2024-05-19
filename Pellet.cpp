@@ -1,7 +1,8 @@
 #include "Pellet.hpp"
-#include "SDL.h"
-#include "SDL_image.h"
-
+#include "Gun.hpp"
+#include "SDL2/SDL.h"
+#include "SDL2/SDL_image.h"
+extern Gun* gun;
 Pellet::~Pellet() {
     if (texture != nullptr) {
         SDL_DestroyTexture(texture);
@@ -9,19 +10,18 @@ Pellet::~Pellet() {
     }
 }
 Pellet::Pellet(float x, float y, float velX, float velY)
-    : posX(x), posY(y), velocityX(velX), velocityY(velY){
+    : posX(x), posY(y), velocityX(velX), velocityY(velY) {
 
 }
 
 void Pellet::update(float x, float y, int windowWidth, int windowHeight) {
     posX = x;
     posY = y;
-    std::cout << posX << "\n";
-    std::cout << posY << "\n";
-    if (posX > (windowWidth) || posY > (windowHeight)) {
+
+    if (posX > (gun->gunX + 1000) || posY > (gun->gunY + 1000)) {
         isOutOfBoundaries = true;
     }
-    if (posX < 0 || posY < 0) {
+    if (posX < (gun->gunX - 1000) || posY < (gun->gunY - 1000)) {
         isOutOfBoundaries = true;
     }
 }
@@ -38,5 +38,3 @@ void Pellet::deleteTexture(SDL_Texture* texture) {
 SDL_Texture* Pellet::getTexture() const {
     return texture;
 }
-
-
