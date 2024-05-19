@@ -1,7 +1,7 @@
 #include "Ball.hpp"
 #include <cmath>
 
-Ball::Ball(){}
+Ball::Ball() {}
 
 void Ball::update(int windowWidth, int windowHeight, float deltaTime) {
 
@@ -13,19 +13,15 @@ void Ball::update(int windowWidth, int windowHeight, float deltaTime) {
 
     time += deltaTime;
 
-
-
     ballY += deltaX;
-    std::cout << "Square coordinates : (x = ";
-    std::cout << ballX;
-    std::cout << ", y = ";
-    std::cout << ballY;
-    std::cout << ")" << std::endl;
 }
 
 void Ball::render(SDL_Renderer* renderer, int x, int y) {
     x += ballX;
     y += ballY;
+    if (x < 0) {
+        isOutOfBoundaries == true;
+    }
     if (texture == nullptr) {
         SDL_Surface* imageSurface = IMG_Load("ball.png");
         if (imageSurface == NULL) {
@@ -47,3 +43,10 @@ void Ball::render(SDL_Renderer* renderer, int x, int y) {
     SDL_RenderCopy(renderer, texture, nullptr, &rect);
 }
 
+SDL_Texture* Ball::getTexture() const {
+    return texture;
+}
+
+void Ball::deleteTexture(SDL_Texture* texture) {
+    SDL_DestroyTexture(texture);
+}
