@@ -9,8 +9,8 @@ Pellet::~Pellet() {
         texture = nullptr;
     }
 }
-Pellet::Pellet(float x, float y, float velX, float velY)
-    : posX(x), posY(y), velocityX(velX), velocityY(velY) {
+Pellet::Pellet(float x, float y)
+    : posX(x), posY(y) {
 
 }
 
