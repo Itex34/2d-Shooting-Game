@@ -32,24 +32,22 @@ void Gun::update(int windowWidth, int windowHeight) {
 
 void Gun::render(SDL_Renderer* renderer, int windowWidth, int windowHeight) {
 
-    float pelletSpeed = 30.0f;
-    float pelletVelX = 0;
-    float pelletVelY = 0;
 
-    pelletVelX = pelletSpeed * cos((initialRotationAngle - 47) * M_PI / 180);
-    pelletVelY = pelletSpeed * sin((initialRotationAngle - 47) * M_PI / 180);
-    
+
+
     Uint32 mouseState = SDL_GetMouseState(&mouseX, &mouseY);
 
     gunTipX = gunX + cos((rotationAngle - 60) * M_PI / 180) * 100;
     gunTipY = gunY + sin((rotationAngle - 60) * M_PI / 180) * 100;
-    
+
 
     if (mouseState & SDL_BUTTON(SDL_BUTTON_LEFT)) {
         if (pellet == nullptr) {
-            pelletIsVisible = true;
+            pelletIsVisible = false;
+
             pelletX = gunTipX;
             pelletY = gunTipY;
+
             initialRotationAngle = rotationAngle;
         }
     }
@@ -57,19 +55,27 @@ void Gun::render(SDL_Renderer* renderer, int windowWidth, int windowHeight) {
 
     if (game != nullptr)
     {
-        if(pellet == nullptr)
+        if (pellet == nullptr)
         {
             pelletIsVisible = true;
             delete pellet;
-            pellet = new Pellet(pelletX, pelletY, pelletVelX, pelletVelY);
+            pellet = new Pellet(pelletX, pelletY);
         }
 
         if (pellet->isOutOfBoundaries == false)
-        {            
-            shoot(windowWidth, windowHeight, pelletX, pelletY);
+        {
             createPelletTexture(renderer);
-            pelletX += pelletVelX;
-            pelletY += pelletVelY;
+            pellet->render(game->getRenderer(), pelletX, pelletY, pelletTexture);
+            pellet->update(pelletX, pelletY, windowWidth, windowHeight);
+
+            pellet->render(game->getRenderer(), pelletX + (pelletVelX(80) - pelletVelX(47)), pelletY + (pelletVelY(80) - pelletVelY(47)), pelletTexture);
+            pellet->update(pelletX + (pelletVelX(80) - pelletVelX(47)), pelletY + (pelletVelY(80) - pelletVelY(47)), windowWidth, windowHeight);
+
+            pellet->render(game->getRenderer(), pelletX + (pelletVelX(10) - pelletVelX(47)), pelletY + (pelletVelY(10) - pelletVelY(47)), pelletTexture);
+            pellet->update(pelletX + (pelletVelX(10) - pelletVelX(47)), pelletY + (pelletVelY(10) - pelletVelY(47)), windowWidth, windowHeight);
+
+            pelletX += pelletVelX(47);
+            pelletY += pelletVelY(47);
 
         }
         else {
@@ -77,7 +83,7 @@ void Gun::render(SDL_Renderer* renderer, int windowWidth, int windowHeight) {
         }
 
     }
-    
+
 
     int renderX = gunX - width / 2;
     int renderY = gunY - height / 2;
@@ -109,12 +115,7 @@ void Gun::render(SDL_Renderer* renderer, int windowWidth, int windowHeight) {
     SDL_Rect rect{ renderX, renderY, width, height };
     SDL_RenderCopyEx(renderer, texture, NULL, &rect, rotationAngle, nullptr, SDL_FLIP_NONE);
 }
-void Gun::shoot(int windowWidth, int windowHeight, float xPos, float yPos) {
-    xPos = pelletX;
-    yPos = pelletY;
-    pellet->render(game->getRenderer(), xPos, yPos, pelletTexture);
-    pellet->update(xPos, yPos, windowWidth, windowHeight);
-}
+
 
 void Gun::cleanup() {
     if (pellet != nullptr) {
@@ -124,18 +125,26 @@ void Gun::cleanup() {
 }
 
 void Gun::createPelletTexture(SDL_Renderer* renderer) {
-    if (pelletIsVisible == true && pelletTexture == nullptr){   
+    if (pelletIsVisible == true && pelletTexture == nullptr) {
         SDL_Surface* imageSurface = IMG_Load("ball.png");
         if (imageSurface == NULL) {
             printf("Unable to load image: %s\n", IMG_GetError());
             return;
         }
         pelletTexture = SDL_CreateTextureFromSurface(renderer, imageSurface);
-        SDL_FreeSurface(imageSurface);      
+        SDL_FreeSurface(imageSurface);
     }
 
     if (pelletTexture == nullptr) {
         printf("Failed to create pellet texture: %s\n", SDL_GetError());
         return;
     }
-}      
+}
+
+
+float Gun::pelletVelX(float rotationOffset) {
+    return pelletSpeed * cos((initialRotationAngle - rotationOffset) * M_PI / 180);
+}
+float Gun::pelletVelY(float rotationOffset) {
+    return pelletSpeed * sin((initialRotationAngle - rotationOffset) * M_PI / 180);
+}
