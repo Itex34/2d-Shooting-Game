@@ -20,13 +20,16 @@ public:
     void deleteTexture(SDL_Texture* texture);
 
     bool isOutOfBoundaries = false;
-private:
-    float deltaTime;
-    int width = 100;
-    int height = 100;
-
+    bool isHit = false;
     int ballX = 200;
     int ballY = 43;
+    float radius = 100;
+private:
+    float deltaTime;
+    int width = radius;
+    int height = radius;
+
+
     int velocityX = 2;
     int velocityY = 2;
 
